@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Cart | Headphones</title>
+    <style>
+        .cart__container {
+            max-width: var(--max-width);
+            margin: 10rem auto;
+            padding: 2rem;
+        }
+
+        .cart__table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+        }
+
+        .cart__table th,
+        .cart__table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart__table th {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .cart__total {
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .cart__actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav__header">
+            <div class="nav__logo">
+                <a href="index.html">
+                    <img src="assets/logo-dark.png" alt="logo" class="logo-dark" />
+                    <img src="assets/logo-white.png" alt="logo" class="logo-white" />
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="cart__container">
+        <h2>Your Cart</h2>
+        <table class="cart__table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="cartItems">
+                <!-- Cart items will be injected here -->
+            </tbody>
+        </table>
+        <div class="cart__total" id="cartTotal">Total: ₹0</div>
+        <div class="cart__actions">
+            <a href="index.html" class="btn" style="background-color: var(--text-light);">Continue Shopping</a>
+            <a href="checkout.html" class="btn">Checkout</a>
+        </div>
+    </section>
+
+    <script src="main.js"></script>
+    <script>
+        async function loadCart() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Please login to view cart');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/cart', {
+                    headers: { 'Authorization': token }
+                });
+                const cart = await response.json();
+                const cartItems = document.getElementById('cartItems');
+                let total = 0;
+
+                cartItems.innerHTML = cart.map(item => {
+                    const itemTotal = item.productId.price * item.quantity;
+                    total += itemTotal;
+                    return `
+            <tr>
+              <td>₹{item.productId.name}</td>
+              <td>₹₹{item.productId.price}</td>
+              <td>₹{item.quantity}</td>
+              <td>₹₹{itemTotal}</td>
+              <td><button onclick="removeFromCart('₹{item.productId._id}')" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background-color: #ff4444;">Remove</button></td>
+            </tr>
+          `;
+                }).join('');
+
+                document.getElementById('cartTotal').innerText = `Total: ₹₹{total}`;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function removeFromCart(productId) {
+            const token = localStorage.getItem('token');
+            try {
+                await fetch('/api/cart/remove', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token
+                    },
+                    body: JSON.stringify({ productId })
+                });
+                loadCart();
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        loadCart();
+    </script>
+</body>
+
+</html>
