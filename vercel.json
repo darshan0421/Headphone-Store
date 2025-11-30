@@ -3,31 +3,18 @@
     "builds": [
         {
             "src": "server.js",
-            "use": "@vercel/node",
-            "config": {
-                "includeFiles": [
-                    "data/**"
-                ]
-            }
+            "use": "@vercel/node"
         },
         {
-            "src": "*.html",
+            "src": "assets/**",
             "use": "@vercel/static"
         },
         {
-            "src": "*.css",
+            "src": "*.{html,css}",
             "use": "@vercel/static"
         },
         {
-            "src": "script.js",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "products.js",
-            "use": "@vercel/static"
-        },
-        {
-            "src": "images/**",
+            "src": "main.js",
             "use": "@vercel/static"
         }
     ],
