@@ -105,16 +105,16 @@
                     total += itemTotal;
                     return `
             <tr>
-              <td>₹{item.productId.name}</td>
-              <td>₹₹{item.productId.price}</td>
-              <td>₹{item.quantity}</td>
-              <td>₹₹{itemTotal}</td>
-              <td><button onclick="removeFromCart('₹{item.productId._id}')" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background-color: #ff4444;">Remove</button></td>
+              <td>${item.productId.name}</td>
+              <td>₹${item.productId.price}</td>
+              <td>${item.quantity}</td>
+              <td>₹${itemTotal}</td>
+              <td><button onclick="removeFromCart('${item.productId._id}')" class="btn" style="padding: 0.5rem 1rem; font-size: 0.8rem; background-color: #ff4444;">Remove</button></td>
             </tr>
           `;
                 }).join('');
 
-                document.getElementById('cartTotal').innerText = `Total: ₹₹{total}`;
+                document.getElementById('cartTotal').innerText = `Total: ₹${total}`;
             } catch (error) {
                 console.error('Error:', error);
             }

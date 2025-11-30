@@ -120,14 +120,14 @@
                     total += itemTotal;
                     return `
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-              <span>₹{item.productId.name} x ₹{item.quantity}</span>
-              <span>₹₹{itemTotal}</span>
+              <span>${item.productId.name} x ${item.quantity}</span>
+              <span>₹${itemTotal}</span>
             </div>
           `;
                 }).join('');
 
                 totalAmount = total;
-                document.getElementById('orderTotal').innerText = `Total: ₹₹{total}`;
+                document.getElementById('orderTotal').innerText = `Total: ₹${total}`;
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -148,7 +148,7 @@
             }));
 
             try {
-                const response = await fetch('http://localhost:5000/api/payment/checkout', {
+                const response = await fetch('/api/payment/checkout', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
