@@ -96,6 +96,12 @@
                 const response = await fetch('/api/cart', {
                     headers: { 'Authorization': token }
                 });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load cart');
+                }
+
                 const cart = await response.json();
                 const cartItems = document.getElementById('cartItems');
                 let total = 0;
@@ -117,6 +123,7 @@
                 document.getElementById('cartTotal').innerText = `Total: ₹${total}`;
             } catch (error) {
                 console.error('Error:', error);
+                alert('Error loading cart: ' + error.message);
             }
         }
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const Product = require('../models/Product');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 // Middleware to verify token (simplified)
@@ -13,8 +14,6 @@ const verifyToken = (req, res, next) => {
         next();
     });
 };
-
-const jwt = require('jsonwebtoken');
 
 // Get Cart
 router.get('/', verifyToken, async (req, res) => {

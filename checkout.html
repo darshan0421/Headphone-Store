@@ -109,6 +109,12 @@
                 const response = await fetch('/api/cart', {
                     headers: { 'Authorization': token }
                 });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to load cart');
+                }
+
                 const cart = await response.json();
                 cartItemsData = cart;
 
@@ -130,6 +136,7 @@
                 document.getElementById('orderTotal').innerText = `Total: ₹${total}`;
             } catch (error) {
                 console.error('Error:', error);
+                alert('Error loading checkout: ' + error.message);
             }
         }
 
@@ -165,10 +172,12 @@
                     alert('Order Placed Successfully!');
                     window.location.href = 'index.html';
                 } else {
-                    alert('Payment Failed');
+                    const data = await response.json();
+                    alert('Payment Failed: ' + (data.error || 'Unknown error'));
                 }
             } catch (error) {
                 console.error('Error:', error);
+                alert('Error processing payment: ' + error.message);
             }
         });
 
