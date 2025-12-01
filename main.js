@@ -97,11 +97,23 @@ if (logoutBtn) {
 async function initializeProducts() {
   try {
     // Seed products first (idempotent)
-    await fetch('/api/products/seed');
+    try {
+      await fetch('/api/products/seed');
+    } catch (seedError) {
+      console.warn('Seeding failed (might be already seeded or connection issue):', seedError);
+    }
 
     // Fetch products
     const response = await fetch('/api/products');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products: ${response.statusText}`);
+    }
     const products = await response.json();
+
+    if (!products || products.length === 0) {
+      console.warn('No products found in database.');
+      return;
+    }
 
     // Map products to buttons (Simple mapping for demo)
     const addToCartBtns = document.querySelectorAll('.btn');
@@ -127,7 +139,7 @@ async function initializeProducts() {
           }
 
           if (!productToAdd) {
-            alert('Product not found');
+            alert('Product not found in database');
             return;
           }
 
@@ -144,10 +156,12 @@ async function initializeProducts() {
             if (res.ok) {
               alert(`${productToAdd.name} added to cart!`);
             } else {
-              alert('Failed to add to cart');
+              const data = await res.json();
+              alert('Failed to add to cart: ' + (data.error || 'Unknown error'));
             }
           } catch (error) {
             console.error(error);
+            alert('Error adding to cart: ' + error.message);
           }
         });
       }
