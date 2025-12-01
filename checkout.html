@@ -116,24 +116,26 @@
                 }
 
                 const cart = await response.json();
-                cartItemsData = cart;
+
+                const validItems = cart.filter(item => item.productId);
+                cartItemsData = validItems;
 
                 const orderItems = document.getElementById('orderItems');
-                let total = 0;
 
-                orderItems.innerHTML = cart.map(item => {
-                    const itemTotal = item.productId.price * item.quantity;
-                    total += itemTotal;
+                const total = validItems.reduce((sum, item) => sum + (Number(item.productId.price) * Number(item.quantity)), 0);
+
+                orderItems.innerHTML = validItems.map(item => {
+                    const itemTotal = Number(item.productId.price) * Number(item.quantity);
                     return `
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
               <span>${item.productId.name} x ${item.quantity}</span>
-              <span>₹${itemTotal}</span>
+              <span>₹${itemTotal.toFixed(2)}</span>
             </div>
           `;
                 }).join('');
 
                 totalAmount = total;
-                document.getElementById('orderTotal').innerText = `Total: ₹${total}`;
+                document.getElementById('orderTotal').innerText = `Total: ₹${total.toFixed(2)}`;
             } catch (error) {
                 console.error('Error:', error);
                 alert('Error loading checkout: ' + error.message);
